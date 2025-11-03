@@ -3,6 +3,46 @@ export type VesselStatus = "active" | "inactive" | "pending" | "approved" | "rej
 export type UserRole = "admin" | "client"
 export type AlertLevel = "info" | "warning" | "danger"
 
+export type ReminderStatus = "open" | "in_progress" | "completed"
+export type ReminderPriority = "low" | "medium" | "high"
+export type ReminderCategory = "license" | "document" | "maintenance" | "inspection" | "health" | "safety" | "supply" | "other"
+
+export type DocumentStatus = "valid" | "expiring" | "expired"
+
+export interface VesselDocument {
+  id: string
+  title: string
+  type: "certificate" | "license" | "inspection" | "insurance" | "safety" | "other"
+  status: DocumentStatus
+  issueDate?: string
+  expiryDate?: string
+  issuer?: string
+  reference?: string
+}
+
+export interface VesselHealthProfile {
+  hull: "excellent" | "good" | "attention" | "critical"
+  machinery: "excellent" | "good" | "attention" | "critical"
+  navigation: "excellent" | "good" | "attention" | "critical"
+  safety: "excellent" | "good" | "attention" | "critical"
+  overallScore: number
+  notes?: string
+}
+
+export interface VesselReminder {
+  id: string
+  vesselId: string
+  title: string
+  description?: string
+  category: ReminderCategory
+  status: ReminderStatus
+  priority: ReminderPriority
+  dueDate?: string
+  createdAt: string
+  updatedAt: string
+  relatedDocumentId?: string
+}
+
 export interface User {
   id: string
   email: string
@@ -33,6 +73,19 @@ export interface Vessel {
   length?: number
   beam?: number
   draft?: number
+  homePort?: string
+  currentLocation?: string
+  yearBuilt?: number
+  dwt?: number
+  grossTonnage?: number
+  crewCapacity?: number
+  fuelType?: string
+  classSociety?: string
+  lastInspection?: string
+  nextInspection?: string
+  nextDryDock?: string
+  documents?: VesselDocument[]
+  healthProfile?: VesselHealthProfile
 }
 
 export interface OceanReading {

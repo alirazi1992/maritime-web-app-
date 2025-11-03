@@ -1,5 +1,5 @@
 import { create } from "zustand"
-import { persist } from "zustand/middleware"
+import { persist, createJSONStorage } from "zustand/middleware"
 import type { Locale } from "@/lib/i18n/config"
 
 interface UIState {
@@ -19,7 +19,7 @@ export const useUIStore = create<UIState>()(
   persist(
     (set) => ({
       theme: "light",
-      locale: "fa",
+      locale: "en",
       sidebarOpen: true,
       _hasHydrated: false,
       setHasHydrated: (state) => set({ _hasHydrated: state }),
@@ -32,6 +32,20 @@ export const useUIStore = create<UIState>()(
     }),
     {
       name: "ui-storage",
+      storage: createJSONStorage(() =>
+        typeof window !== "undefined"
+          ? window.localStorage
+          : ({
+              getItem: () => null,
+              setItem: () => {},
+              removeItem: () => {},
+              clear: () => {},
+              key: () => null,
+              get length() {
+                return 0
+              },
+            } as Storage),
+      ),
       onRehydrateStorage: () => (state) => {
         state?.setHasHydrated(true)
       },

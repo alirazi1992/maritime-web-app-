@@ -3,29 +3,47 @@
 import { useUIStore } from "@/lib/store/ui-store"
 import { translations } from "@/lib/i18n/translations"
 import { defaultLocale } from "@/lib/i18n/config"
-import { useState, useEffect } from "react"
 
 export function useTranslation() {
-  const [mounted, setMounted] = useState(false)
   const locale = useUIStore((state) => state.locale)
   const hasHydrated = useUIStore((state) => state._hasHydrated)
 
-  useEffect(() => {
-    setMounted(true)
-  }, [])
+  const activeLocale = hasHydrated ? locale : defaultLocale
 
-  const activeLocale = mounted && hasHydrated ? locale : defaultLocale
-
-  const t = (key: string): string => {
+  const t = (key: string, params?: Record<string, string | number>): string => {
     const keys = key.split(".")
-    let value: any = translations[activeLocale]
+    const dictionary = translations[activeLocale] ?? translations[defaultLocale]
+    let value: any = dictionary
 
     for (const k of keys) {
       value = value?.[k]
     }
 
-    return value || key
+    if (typeof value === "string") {
+      if (params) {
+        return Object.entries(params).reduce((acc, [paramKey, paramValue]) => {
+          const pattern = `{{${paramKey}}}`
+          return acc.split(pattern).join(String(paramValue))
+        }, value)
+      }
+      return value
+    }
+
+    return key
   }
 
-  return { t, locale: activeLocale }
+  return {
+    t: (key: string, params?: Record<string, string | number>) => {
+      const result = t(key, params)
+      if (result === key) {
+        const lastSegment = key.split(".").pop() ?? key
+        return lastSegment
+          .replace(/[_-]+/g, " ")
+          .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+          .replace(/\b\w/g, (letter) => letter.toUpperCase())
+      }
+      return result
+    },
+    locale: activeLocale,
+  }
 }

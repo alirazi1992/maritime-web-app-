@@ -1,6 +1,6 @@
-"use client"
+﻿"use client"
 
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { DashboardLayout } from "@/components/layout/dashboard-layout"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -17,25 +17,26 @@ export default function ClientNewsPage() {
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<"all" | "unread">("all")
 
-  const loadNews = async () => {
+  const loadNews = useCallback(async () => {
+    setLoading(true)
     try {
       const data = await newsApi.getAll()
       setNews(data)
     } catch (error) {
       console.error("Error loading news:", error)
       toast({
-        title: "خطا",
-        description: "بارگذاری اخبار با خطا مواجه شد",
+        title: "Ø®Ø·Ø§",
+        description: "Ø¨Ø§Ø±Ú¯Ø°Ø§Ø±ÛŒ Ø§Ø®Ø¨Ø§Ø± Ø¨Ø§ Ø®Ø·Ø§ Ù…ÙˆØ§Ø¬Ù‡ Ø´Ø¯",
         variant: "destructive",
       })
     } finally {
       setLoading(false)
     }
-  }
+  }, [toast])
 
   useEffect(() => {
-    loadNews()
-  }, [])
+    void loadNews()
+  }, [loadNews])
 
   const handleMarkAsRead = async (id: string) => {
     try {
@@ -43,8 +44,8 @@ export default function ClientNewsPage() {
       loadNews()
     } catch (error) {
       toast({
-        title: "خطا",
-        description: "عملیات با خطا مواجه شد",
+        title: "Ø®Ø·Ø§",
+        description: "Ø¹Ù…Ù„ÛŒØ§Øª Ø¨Ø§ Ø®Ø·Ø§ Ù…ÙˆØ§Ø¬Ù‡ Ø´Ø¯",
         variant: "destructive",
       })
     }
@@ -83,30 +84,30 @@ export default function ClientNewsPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold">اخبار و اطلاعیه‌ها</h1>
-            <p className="text-muted-foreground">آخرین اخبار و اطلاعیه‌های دریایی</p>
+            <h1 className="text-3xl font-bold">Ø§Ø®Ø¨Ø§Ø± Ùˆ Ø§Ø·Ù„Ø§Ø¹ÛŒÙ‡â€ŒÙ‡Ø§</h1>
+            <p className="text-muted-foreground">Ø¢Ø®Ø±ÛŒÙ† Ø§Ø®Ø¨Ø§Ø± Ùˆ Ø§Ø·Ù„Ø§Ø¹ÛŒÙ‡â€ŒÙ‡Ø§ÛŒ Ø¯Ø±ÛŒØ§ÛŒÛŒ</p>
           </div>
           <div className="flex gap-2">
             <Button variant={filter === "all" ? "default" : "outline"} onClick={() => setFilter("all")}>
-              همه
+              Ù‡Ù…Ù‡
             </Button>
             <Button variant={filter === "unread" ? "default" : "outline"} onClick={() => setFilter("unread")}>
-              خوانده نشده
+              Ø®ÙˆØ§Ù†Ø¯Ù‡ Ù†Ø´Ø¯Ù‡
             </Button>
           </div>
         </div>
 
         {loading ? (
-          <div className="text-center py-12">در حال بارگذاری...</div>
+          <div className="text-center py-12">Ø¯Ø± Ø­Ø§Ù„ Ø¨Ø§Ø±Ú¯Ø°Ø§Ø±ÛŒ...</div>
         ) : filteredNews.length === 0 ? (
           <Card>
             <CardContent className="flex flex-col items-center justify-center py-12">
               <CheckCircle className="h-16 w-16 text-muted-foreground" />
               <h3 className="mt-4 text-lg font-semibold">
-                {filter === "unread" ? "همه اخبار را خوانده‌اید" : "خبری وجود ندارد"}
+                {filter === "unread" ? "Ù‡Ù…Ù‡ Ø§Ø®Ø¨Ø§Ø± Ø±Ø§ Ø®ÙˆØ§Ù†Ø¯Ù‡â€ŒØ§ÛŒØ¯" : "Ø®Ø¨Ø±ÛŒ ÙˆØ¬ÙˆØ¯ Ù†Ø¯Ø§Ø±Ø¯"}
               </h3>
               <p className="mt-2 text-sm text-muted-foreground">
-                {filter === "unread" ? "اخبار جدید به محض انتشار نمایش داده می‌شوند" : ""}
+                {filter === "unread" ? "Ø§Ø®Ø¨Ø§Ø± Ø¬Ø¯ÛŒØ¯ Ø¨Ù‡ Ù…Ø­Ø¶ Ø§Ù†ØªØ´Ø§Ø± Ù†Ù…Ø§ÛŒØ´ Ø¯Ø§Ø¯Ù‡ Ù…ÛŒâ€ŒØ´ÙˆÙ†Ø¯" : ""}
               </p>
             </CardContent>
           </Card>
@@ -125,7 +126,7 @@ export default function ClientNewsPage() {
                           <CardTitle>{item.title}</CardTitle>
                           {!item.isRead && (
                             <Badge variant="default" className="text-xs">
-                              جدید
+                              Ø¬Ø¯ÛŒØ¯
                             </Badge>
                           )}
                         </div>
@@ -134,7 +135,7 @@ export default function ClientNewsPage() {
                     </div>
                     {!item.isRead && (
                       <Button size="sm" variant="outline" onClick={() => handleMarkAsRead(item.id)}>
-                        علامت به عنوان خوانده شده
+                        Ø¹Ù„Ø§Ù…Øª Ø¨Ù‡ Ø¹Ù†ÙˆØ§Ù† Ø®ÙˆØ§Ù†Ø¯Ù‡ Ø´Ø¯Ù‡
                       </Button>
                     )}
                   </div>
@@ -150,3 +151,7 @@ export default function ClientNewsPage() {
     </DashboardLayout>
   )
 }
+
+
+
+

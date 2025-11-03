@@ -42,7 +42,7 @@ export function ComplianceTimeline({ events, startDate, endDate }: ComplianceTim
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr)
-    return `${date.getDate()} ${date.toLocaleString("default", { month: "long" })} ${date.getFullYear()} ${date.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}`
+    return date.toLocaleString("fa-IR", { dateStyle: "medium", timeStyle: "short" })
   }
 
   const getDayLabels = () => {
@@ -54,6 +54,7 @@ export function ComplianceTimeline({ events, startDate, endDate }: ComplianceTim
       labels.push({
         date: new Date(current),
         position: ((current.getTime() - start) / totalDuration) * 100,
+        label: current.toLocaleDateString("fa-IR", { day: "numeric", month: "short" }),
       })
       current.setDate(current.getDate() + 1)
     }
@@ -93,7 +94,7 @@ export function ComplianceTimeline({ events, startDate, endDate }: ComplianceTim
                 key={idx}
                 style={{ position: "absolute", left: `${label.position}%`, transform: "translateX(-50%)" }}
               >
-                {label.date.getDate()} {label.date.toLocaleString("default", { month: "short" })}
+                {label.label}
               </div>
             ))}
           </div>

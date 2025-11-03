@@ -1,6 +1,6 @@
 "use client"
 
-import { Menu, Moon, Sun, Globe } from "lucide-react"
+import { Menu, Moon, Sun, Globe, PanelLeftClose, PanelLeftOpen } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useUIStore } from "@/lib/store/ui-store"
@@ -15,6 +15,7 @@ export function Header() {
   const locale = useUIStore((state) => state.locale)
   const toggleTheme = useUIStore((state) => state.toggleTheme)
   const setLocale = useUIStore((state) => state.setLocale)
+  const sidebarOpen = useUIStore((state) => state.sidebarOpen)
   const toggleSidebar = useUIStore((state) => state.toggleSidebar)
   const user = useAuthStore((state) => state.user)
   const logout = useAuthStore((state) => state.logout)
@@ -29,6 +30,9 @@ export function Header() {
       <div className="flex h-16 items-center gap-4 px-4">
         <Button variant="ghost" size="icon" onClick={toggleSidebar} className="md:hidden">
           <Menu className="h-5 w-5" />
+        </Button>
+        <Button variant="ghost" size="icon" onClick={toggleSidebar} className="hidden md:inline-flex">
+          {sidebarOpen ? <PanelLeftClose className="h-5 w-5" /> : <PanelLeftOpen className="h-5 w-5" />}
         </Button>
 
         <div className="flex-1">

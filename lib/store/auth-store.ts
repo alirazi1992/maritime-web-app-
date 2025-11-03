@@ -1,5 +1,5 @@
 import { create } from "zustand"
-import { persist } from "zustand/middleware"
+import { persist, createJSONStorage } from "zustand/middleware"
 
 export type UserRole = "admin" | "client"
 
@@ -109,6 +109,20 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: "auth-storage",
+      storage: createJSONStorage(() =>
+        typeof window !== "undefined"
+          ? window.localStorage
+          : ({
+              getItem: () => null,
+              setItem: () => {},
+              removeItem: () => {},
+              clear: () => {},
+              key: () => null,
+              get length() {
+                return 0
+              },
+            } as Storage),
+      ),
       onRehydrateStorage: () => (state) => {
         state?.setHasHydrated(true)
       },
